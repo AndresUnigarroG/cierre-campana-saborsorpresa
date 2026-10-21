@@ -1,0 +1,874 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sabor Sorpresa · Resultado Final</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --naranja: #E8520A;
+  --morado:  #4A1D8C;
+  --verde:   #1A6B3C;
+  --negro:   #1A1917;
+  --gris0:   #F7F6F4;
+  --gris1:   #E8E6E3;
+  --gris2:   #C8C6C2;
+  --gris3:   #7A7874;
+  --radio:   8px;
+  --c1:      #2563EB;
+  --c2:      #EA580C;
+  --c3:      #16A34A;
+  --ok-bg:   #DCFCE7; --ok-txt: #15803D;
+  --warn-bg: #FEF9C3; --warn-txt: #A16207;
+  --bad-bg:  #FEE2E2; --bad-txt: #B91C1C;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--negro);
+  font-size: 13px;
+  padding: 1rem;
+}
+.nav-tabs {
+  display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1.1rem;
+}
+.tab-btn {
+  padding: .35rem .85rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--gris1);
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--gris3);
+  cursor: pointer;
+  transition: all .15s;
+}
+.tab-btn:hover { border-color: var(--naranja); color: var(--naranja); }
+.tab-btn.activo { background: var(--negro); border-color: var(--negro); color: #fff; font-weight: 600; }
+.tab-bonos { border-color: #D97706; color: #D97706; font-weight: 700; }
+.tab-bonos:hover { background: #FEF3C7; border-color: #B45309; color: #B45309; }
+.tab-bonos.activo { background: #D97706; border-color: #D97706; color: #fff; }
+
+/* bonos tab */
+.bono-card {
+  border: 1.5px solid var(--gris1);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.2rem;
+}
+.bono-header {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  margin-bottom: .9rem;
+}
+.bono-nombre {
+  font-family: 'Sora', sans-serif;
+  font-size: 15px; font-weight: 700;
+}
+.bono-chip {
+  padding: .2rem .65rem; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+}
+.bono-chip-mejora { background: #FEF9C3; color: #92400E; }
+.bono-chip-ok   { background: #FEF9C3; color: #92400E; }
+.bono-veredicto {
+  margin-left: auto;
+  padding: .25rem .75rem; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+}
+.veredicto-si  { background: #DCFCE7; color: #15803D; }
+.veredicto-no  { background: #FEE2E2; color: #B91C1C; }
+
+/* mini tabla mezcla bonos */
+.bono-grid {
+  display: grid;
+  grid-template-columns: 90px repeat(5, 1fr);
+  gap: 2px 4px;
+  font-size: 11px;
+  margin-bottom: .6rem;
+}
+.bono-grid-hdr { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--gris3); text-align: center; }
+.bono-grid-hdr:first-child { text-align: left; }
+.bono-row-label { font-weight: 600; color: var(--negro); display: flex; align-items: center; }
+.bono-bar-cell { display: flex; align-items: center; }
+.bono-bar-outer {
+  width: 100%; height: 22px; border-radius: 4px;
+  display: flex; align-items: center;
+  padding: 0 5px;
+  font-size: 11px; font-weight: 700; color: #fff;
+  position: relative;
+}
+.bono-vol-cell { text-align: center; color: var(--gris3); font-variant-numeric: tabular-nums; }
+.bono-caja-txt {
+  border-radius: 6px; padding: .65rem .85rem;
+  font-size: 12px; line-height: 1.5;
+  margin-top: .5rem;
+}
+.caja-si  { background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; }
+.caja-no  { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+.bono-no-vol {
+  background: var(--gris0); border-radius: 8px; padding: .8rem 1rem;
+  font-size: 12px; color: var(--gris3); margin-bottom: 1.2rem;
+  border-left: 3px solid var(--gris2);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .6rem;
+  margin-bottom: 1.1rem;
+}
+@media(max-width:600px){ .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+.kpi-tile {
+  border: 1px solid var(--gris1);
+  border-radius: var(--radio);
+  padding: .8rem 1rem;
+}
+.kpi-label { font-size: 11px; color: var(--gris3); margin-bottom: .25rem; }
+.kpi-val {
+  font-family: 'Sora', sans-serif;
+  font-size: 22px; font-weight: 700;
+}
+.kpi-sub { font-size: 11px; color: var(--gris3); margin-top: .15rem; }
+.kpi-ok   { color: var(--ok-txt); }
+.kpi-warn { color: var(--warn-txt); }
+.kpi-bad  { color: var(--bad-txt); }
+
+.sec-titulo {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--gris3);
+  margin-bottom: .6rem;
+}
+
+.tabla-res {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 12px;
+}
+.tabla-res th {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--gris3);
+  padding: .4rem .5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gris1);
+}
+.tabla-res td {
+  padding: .55rem .5rem;
+  border-bottom: 1px solid var(--gris0);
+  vertical-align: middle;
+}
+.tabla-res tr:last-child td { border-bottom: none; }
+.tabla-res .num { text-align: right; font-variant-numeric: tabular-nums; }
+.badge {
+  display: inline-flex; align-items: center; gap: .25rem;
+  padding: .2rem .5rem; border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+}
+.badge-ok   { background: var(--ok-bg);   color: var(--ok-txt); }
+.badge-warn { background: var(--warn-bg); color: var(--warn-txt); }
+.badge-bad  { background: var(--bad-bg);  color: var(--bad-txt); }
+
+/* mix bar */
+.mix-bar-wrap { margin-bottom: 1.5rem; }
+.mix-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .45rem; font-size: 12px; }
+.mix-label { width: 80px; flex-shrink: 0; color: var(--gris3); font-size: 11px; }
+.mix-track { flex: 1; height: 20px; border-radius: 4px; overflow: hidden; display: flex; position: relative; }
+.mix-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; transition: width .3s; }
+.mix-obj-line {
+  position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(0,0,0,0.35);
+  pointer-events: none;
+}
+
+/* leyenda chips */
+.leyenda { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.lchip { display: flex; align-items: center; gap: .3rem; font-size: 11px; color: var(--negro); }
+.lchip-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* tab content */
+.tab-pane { display: none; }
+.tab-pane.activo { display: block; }
+
+/* tendencia semanal chips */
+.tend-chips { display: flex; gap: .3rem; flex-wrap: wrap; }
+.tend-chip {
+  padding: .15rem .4rem;
+  border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+  background: var(--c1); color: #fff;
+}
+
+/* chart area */
+.chart-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+
+/* tabla mezcla semanal */
+.tabla-mix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 1.5rem;
+}
+.tabla-mix th {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--gris3);
+  padding: .4rem .5rem;
+  text-align: right;
+  border-bottom: 1px solid var(--gris1);
+}
+.tabla-mix th:first-child { text-align: left; }
+.tabla-mix td {
+  padding: .45rem .5rem;
+  border-bottom: 1px solid var(--gris0);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tabla-mix td:first-child { text-align: left; font-weight: 600; }
+.tabla-mix tr:last-child td { border-bottom: none; font-weight: 700; background: var(--gris0); }
+.mix-pct { font-size: 11px; }
+.mix-pct.ok   { color: var(--ok-txt); }
+.mix-pct.warn { color: var(--warn-txt); }
+.mix-pct.bad  { color: var(--bad-txt); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="tab-btn activo" onclick="setTab('resumen',this)">Resumen general</button>
+  <button class="tab-btn" onclick="setTab('Avenida',this)">Avenida</button>
+  <button class="tab-btn" onclick="setTab('Domicilios',this)">Domicilios</button>
+  <button class="tab-btn" onclick="setTab('Principal',this)">Principal</button>
+  <button class="tab-btn" onclick="setTab('Unicentro',this)">Unicentro</button>
+  <button class="tab-btn" onclick="setTab('Centro',this)">Centro</button>
+  <button class="tab-btn tab-bonos" onclick="setTab('bonos',this)">★ BONOS</button>
+</div>
+
+<div id="pane-resumen" class="tab-pane activo"></div>
+<div id="pane-Avenida"    class="tab-pane"></div>
+<div id="pane-Domicilios" class="tab-pane"></div>
+<div id="pane-Principal"  class="tab-pane"></div>
+<div id="pane-Unicentro"  class="tab-pane"></div>
+<div id="pane-Centro"     class="tab-pane"></div>
+<div id="pane-bonos"      class="tab-pane"></div>
+
+<script>
+// ─── DATOS ───────────────────────────────────────────────────────────────────
+const PUNTOS = ['Avenida','Domicilios','Principal','Unicentro','Centro'];
+const META_VOL = { Avenida:908, Domicilios:387, Principal:766, Unicentro:622, Centro:687 };
+const VENTAS_PESOS = { Avenida:26800266, Domicilios:11623423, Principal:20480000, Unicentro:14094183, Centro:14694099 };
+const INGRESO_TOTAL = 87691971;
+const RENTABILIDAD = 57673645;
+const PCT_RENTABILIDAD = 65.8;
+const META_MIX = { c1:50, c2:30, c3:20 };
+const TOL = 7;
+
+// Ventas diarias completas por punto
+// Fechas: 31ago=46265 ... 6oct=46301
+const DIARIO = {
+  Avenida: {
+    c1: [11,28,19,13,32,33,34, 16,23,8,15,12,24,46, 8,12,22,21,24,27,17, 17,14,11,8,11,20,17, 16,17,8,17,14,25,19,16,16],
+    c2: [5,5,4,3,7,9,10,        3,4,2,2,4,8,5,        0,5,4,10,14,4,7,     0,7,2,4,5,9,7,      4,7,4,7,4,3,8,5,0],
+    c3: [0,2,4,10,9,4,5,        4,7,0,4,4,8,12,       5,4,4,2,5,10,9,      1,3,0,7,1,3,9,       2,8,2,3,0,6,5,10,2]
+  },
+  Centro: {
+    c1: [10,8,14,23,20,16,11,   6,20,20,4,13,8,3,    1,10,2,10,0,7,3,     3,9,5,7,16,2,2,      9,7,8,14,14,12,4,8,4],
+    c2: [2,3,7,1,8,7,3,         2,2,5,3,0,4,0,       2,1,2,6,10,8,5,      0,4,9,3,1,6,5,        1,6,9,5,12,9,2,2,13],
+    c3: [1,0,0,2,2,5,2,         1,3,5,4,4,1,1,       0,3,2,5,1,5,2,       2,4,1,5,3,2,0,        2,4,1,1,2,0,0,1,0]
+  },
+  Principal: {
+    c1: [14,10,12,16,9,11,9,    7,23,27,18,25,20,16, 13,14,8,8,29,21,13,  8,20,11,31,13,24,23,  21,0,2,15,29,32,14,8,14],
+    c2: [2,3,1,1,10,7,4,        1,5,1,2,3,5,6,       2,2,2,8,3,7,3,       2,1,5,5,7,7,1,         2,3,2,3,4,13,5,3,2],
+    c3: [1,1,3,2,3,3,2,         0,1,5,1,1,3,2,       3,2,1,2,4,2,0,       2,1,1,3,9,2,1,         4,4,3,2,0,1,1,0,4]
+  },
+  Unicentro: {
+    c1: [9,12,13,10,17,26,24,   10,11,13,5,8,17,12,  5,18,13,6,17,11,14,  10,7,6,13,15,13,6,    11,9,1,15,14,11,8,11,7],
+    c2: [1,2,3,1,4,7,4,         1,1,1,0,0,1,0,       0,2,0,0,5,2,1,       0,2,5,3,5,6,5,         1,0,3,1,1,2,2,0,5],
+    c3: [0,0,0,2,6,2,2,         1,1,2,2,1,3,1,       0,1,2,1,1,4,1,       4,0,0,1,1,3,3,         1,1,0,1,1,1,0,2,2]
+  },
+  Domicilios: {
+    c1: [5,8,9,9,2,10,16,       3,11,2,1,3,4,4,      12,7,9,9,12,12,22,   9,8,9,14,11,19,6,      3,5,4,0,5,6,1,1,6],
+    c2: [0,0,0,0,3,4,2,         1,0,4,1,0,5,4,       0,1,2,1,5,6,3,       0,0,5,5,4,3,4,          6,3,3,3,4,3,15,2,2],
+    c3: [0,1,0,0,0,3,3,         2,1,0,1,2,3,0,       0,0,2,1,4,5,3,       0,6,0,7,1,1,9,          4,1,2,5,5,2,2,0,0]
+  }
+};
+
+// Semanas: índices en el array de 37 días
+const SEMS = [
+  { label:'Sem 1', ini:0,  fin:6  }, // 31ago-6sep
+  { label:'Sem 2', ini:7,  fin:13 }, // 7sep-13sep
+  { label:'Sem 3', ini:14, fin:20 }, // 14sep-20sep
+  { label:'Sem 4', ini:21, fin:27 }, // 21sep-27sep
+  { label:'Sem 5', ini:28, fin:36 }  // 28sep-6oct (9 días)
+];
+
+// Fechas eje X
+const FECHAS = [];
+(function(){
+  const base = new Date(1899,11,30);
+  for(let s=46265;s<=46301;s++){
+    const d = new Date(base.getTime() + s*86400000);
+    FECHAS.push(d.getDate()+'/'+(d.getMonth()+1));
+  }
+})();
+
+// KPI destacado por punto
+const KPI_DEST = {
+  Avenida: p => {
+    let mejV=0, mejL=''; SEMS.forEach(s=>{ const v=sumSem(p,'c1',s)+sumSem(p,'c2',s)+sumSem(p,'c3',s); if(v>mejV){mejV=v;mejL=s.label;} });
+    return { label:'Mejor semana', val:mejL, cls:'kpi-ok', sub:mejV+' und vendidos' };
+  },
+  Domicilios: p => {
+    let mejV=0, mejL=''; SEMS.forEach(s=>{ const v=sumSem(p,'c1',s)+sumSem(p,'c2',s)+sumSem(p,'c3',s); if(v>mejV){mejV=v;mejL=s.label;} });
+    return { label:'Mejor semana', val:mejL, cls:'kpi-ok', sub:mejV+' und vendidos' };
+  },
+  Principal:  p => { const t=sum(p,'c1','c2','c3'); const c3pct=Math.round(sum(p,'c3')/t*100); return { label:'Mezcla C3', val:c3pct+'%', cls:'kpi-warn', sub:'obj 15-25% · mejor acercamiento C3' }; },
+  Unicentro:  p => { const t=sum(p,'c1','c2','c3'); const c1pct=Math.round(sum(p,'c1')/t*100); return { label:'Mezcla C1', val:c1pct+'%', cls:'kpi-bad', sub:'obj 45-55% · más desviado de la red' }; },
+  Centro:     p => { const t=sum(p,'c1','c2','c3'); const c2pct=Math.round(sum(p,'c2')/t*100); return { label:'Mejor mezcla C2', val:c2pct+'%', cls:'kpi-ok', sub:'mejor de la cadena' }; }
+};
+
+// ─── UTILIDADES ──────────────────────────────────────────────────────────────
+function sum(p,...keys){ return keys.reduce((a,k)=>a+p[k].reduce((x,y)=>x+y,0),0); }
+function sumSem(p,k,sem){ let t=0; for(let i=sem.ini;i<=sem.fin;i++) t+=p[k][i]; return t; }
+function pct(v,m){ return Math.round(v/m*100); }
+function fmt(n){ return Math.round(n).toLocaleString('es-CO'); }
+
+function mixStatus(pct, obj){
+  if(pct >= obj-TOL && pct <= obj+TOL) return 'ok';
+  if(Math.abs(pct-obj) <= TOL+5) return 'warn';
+  return 'bad';
+}
+
+// ─── TORTA PARTICIPACIÓN POR PUNTO ───────────────────────────────────────────
+const COLORES_PUNTO = ['#2563EB','#EA580C','#16A34A','#CA8A04','#7C3AED'];
+
+function grafTorta(){
+  const totalUnd = PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c1','c2','c3'),0);
+  const vals = PUNTOS.map(p=>sum(DIARIO[p],'c1','c2','c3'));
+  const R=90, cx=110, cy=110, W=220, H=220;
+  let slices='', ang=-Math.PI/2;
+  vals.forEach((v,i)=>{
+    const frac=v/totalUnd;
+    const a1=ang, a2=ang+frac*2*Math.PI;
+    const x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
+    const x2=cx+R*Math.cos(a2), y2=cy+R*Math.sin(a2);
+    const large=frac>0.5?1:0;
+    // label en el centro del slice
+    const lAng=(a1+a2)/2;
+    const lR=R*0.65;
+    const lx=cx+lR*Math.cos(lAng), ly=cy+lR*Math.sin(lAng);
+    const pctStr=Math.round(frac*100)+'%';
+    slices+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z"
+      fill="${COLORES_PUNTO[i]}" stroke="#fff" stroke-width="2"/>`;
+    if(frac>0.05) slices+=`<text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">${pctStr}</text>`;
+    ang=a2;
+  });
+  // leyenda lateral compacta
+  const leyenda = PUNTOS.map((p,i)=>`<div style="display:flex;align-items:center;gap:5px;font-size:10px;margin-bottom:3px"><span style="width:10px;height:10px;border-radius:2px;background:${COLORES_PUNTO[i]};flex-shrink:0"></span>${p}</div>`).join('');
+  return `<div style="display:flex;align-items:center;gap:.8rem">
+    <svg viewBox="0 0 ${W} ${H}" style="width:160px;height:160px;flex-shrink:0">${slices}</svg>
+    <div>${leyenda}</div>
+  </div>`;
+}
+
+function grafTortaTabla(){
+  const totalUnd = PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c1','c2','c3'),0);
+  const totalPesos = PUNTOS.reduce((a,p)=>a+VENTAS_PESOS[p],0);
+  return PUNTOS.map((p,i)=>{
+    const u=sum(DIARIO[p],'c1','c2','c3');
+    const v=VENTAS_PESOS[p];
+    const pu=Math.round(u/totalUnd*100);
+    const pv=Math.round(v/totalPesos*100);
+    return `<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${COLORES_PUNTO[i]};margin-right:4px"></span><strong>${p}</strong></td>
+      <td class="num">${fmt(u)}</td>
+      <td class="num">${pu}%</td>
+      <td class="num">$${fmt(v)}</td>
+      <td class="num">${pv}%</td>
+    </tr>`;
+  }).join('')+`<tr style="border-top:2px solid var(--gris1);font-weight:600">
+    <td>Total</td>
+    <td class="num">${fmt(totalUnd)}</td>
+    <td class="num">100%</td>
+    <td class="num">$${fmt(totalPesos)}</td>
+    <td class="num">100%</td>
+  </tr>`;
+}
+
+function mixTotalHtml(){
+  const totC1=PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c1'),0);
+  const totC2=PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c2'),0);
+  const totC3=PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c3'),0);
+  const tot=totC1+totC2+totC3;
+  const p1=Math.round(totC1/tot*100);
+  const p2=Math.round(totC2/tot*100);
+  const p3=100-p1-p2;
+  return `<div class="mix-bar-wrap">
+    <div class="mix-row">
+      <span class="mix-label" style="font-weight:700">Total red</span>
+      <div class="mix-track">
+        <div class="mix-seg" style="width:${p1}%;background:var(--c1)">${p1}%</div>
+        <div class="mix-seg" style="width:${p2}%;background:var(--c2)">${p2}%</div>
+        <div class="mix-seg" style="width:${p3}%;background:var(--c3)">${p3}%</div>
+        <div class="mix-obj-line" style="left:50%"></div>
+      </div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--gris3);margin-top:.4rem">
+    C1 Tradición: <strong>${fmt(totC1)} und</strong> · C2 Crispetas: <strong>${fmt(totC2)} und</strong> · C3 Tenders: <strong>${fmt(totC3)} und</strong>
+  </div>`;
+}
+
+// ─── RESUMEN GENERAL ─────────────────────────────────────────────────────────
+function renderResumen(){
+  const totalVendido = PUNTOS.reduce((a,p)=>a+sum(DIARIO[p],'c1','c2','c3'),0);
+  const totalMeta    = PUNTOS.reduce((a,p)=>a+META_VOL[p],0);
+  const pctTotal     = pct(totalVendido,totalMeta);
+  const puntosMeta   = PUNTOS.filter(p=>sum(DIARIO[p],'c1','c2','c3')>=META_VOL[p]);
+
+  // mejor semana global
+  let mejSemLabel='', mejSemVol=0;
+  SEMS.forEach(s=>{
+    const v = PUNTOS.reduce((a,p)=>a+DIARIO[p].c1.slice(s.ini,s.fin+1).reduce((x,y)=>x+y,0)+DIARIO[p].c2.slice(s.ini,s.fin+1).reduce((x,y)=>x+y,0)+DIARIO[p].c3.slice(s.ini,s.fin+1).reduce((x,y)=>x+y,0),0);
+    if(v>mejSemVol){ mejSemVol=v; mejSemLabel=s.label; }
+  });
+  const mejSemDia = Math.round(mejSemVol/7);
+
+  // tabla por punto
+  let filas='';
+  PUNTOS.forEach(p=>{
+    const d=DIARIO[p];
+    const t=sum(d,'c1','c2','c3'), m=META_VOL[p], pc=pct(t,m);
+    const c1f=sum(d,'c1'), c2f=sum(d,'c2'), c3f=sum(d,'c3');
+    const c1p=pct(c1f,t), c2p=pct(c2f,t), c3p=pct(c3f,t);
+    const badge = pc>=100 ? `<span class="badge badge-ok">${pc}% ✓</span>` : `<span class="badge badge-bad">${pc}% ✗</span>`;
+
+    // tendencia semanal (totales por semana)
+    const tends = SEMS.map(s=>sumSem(d,'c1',s)+sumSem(d,'c2',s)+sumSem(d,'c3',s));
+    const tendHtml = tends.map((v,i)=>`<span class="tend-chip" style="background:${i===4?'#4A1D8C':'#2563EB'}">${v}</span>`).join('');
+
+    filas+=`<tr>
+      <td><strong>${p}</strong></td>
+      <td class="num">${fmt(t)}</td>
+      <td class="num">${fmt(m)}</td>
+      <td>${badge}</td>
+      <td class="num"><span class="mix-pct ${mixStatus(c1p,50)}">${c1p}%</span></td>
+      <td class="num"><span class="mix-pct ${mixStatus(c2p,30)}">${c2p}%</span></td>
+      <td class="num"><span class="mix-pct ${mixStatus(c3p,20)}">${c3p}%</span></td>
+      <td><div class="tend-chips">${tendHtml}</div></td>
+    </tr>`;
+  });
+
+  // gráfico volumen por semana y punto
+  const semLabels = SEMS.map(s=>s.label);
+  const colores = ['#2563EB','#EA580C','#16A34A','#CA8A04','#7C3AED'];
+  const svgVol = grafBarrasAgrupadas(semLabels, PUNTOS, colores,
+    PUNTOS.map(p=>SEMS.map(s=>sumSem(DIARIO[p],'c1',s)+sumSem(DIARIO[p],'c2',s)+sumSem(DIARIO[p],'c3',s))),
+    800, 200);
+
+  // gráfico mezcla acumulada (horizontal stacked)
+  const mixBars = PUNTOS.map(p=>{
+    const d=DIARIO[p], t=sum(d,'c1','c2','c3');
+    const c1p=Math.round(sum(d,'c1')/t*100);
+    const c2p=Math.round(sum(d,'c2')/t*100);
+    const c3p=100-c1p-c2p;
+    return {punto:p, c1p, c2p, c3p};
+  });
+
+  let mixHtml=`<div class="mix-bar-wrap">`;
+  mixBars.forEach(b=>{
+    const obj50left = b.c1p; // línea objetivo C1=50%
+    mixHtml+=`<div class="mix-row">
+      <span class="mix-label">${b.punto}</span>
+      <div class="mix-track">
+        <div class="mix-seg" style="width:${b.c1p}%;background:var(--c1)">${b.c1p}%</div>
+        <div class="mix-seg" style="width:${b.c2p}%;background:var(--c2)">${b.c2p}%</div>
+        <div class="mix-seg" style="width:${b.c3p}%;background:var(--c3)">${b.c3p}%</div>
+        <div class="mix-obj-line" style="left:50%"></div>
+      </div>
+    </div>`;
+  });
+  mixHtml+=`</div>`;
+
+  document.getElementById('pane-resumen').innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-tile">
+        <div class="kpi-label">Total vendido</div>
+        <div class="kpi-val ${pctTotal>=100?'kpi-ok':'kpi-warn'}">${fmt(totalVendido)}</div>
+        <div class="kpi-sub">de ${fmt(totalMeta)} meta</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">% cumplimiento</div>
+        <div class="kpi-val ${pctTotal>=100?'kpi-ok':'kpi-warn'}">${pctTotal}%</div>
+        <div class="kpi-sub">${totalVendido-totalMeta>0?'+':''}${fmt(totalVendido-totalMeta)} und</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">Puntos en meta</div>
+        <div class="kpi-val">${puntosMeta.length} de ${PUNTOS.length}</div>
+        <div class="kpi-sub">${puntosMeta.join(' · ')}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">Mejor semana</div>
+        <div class="kpi-val">${mejSemLabel}</div>
+        <div class="kpi-sub">${fmt(mejSemVol)} und · ${mejSemDia}/día</div>
+      </div>
+    </div>
+
+    <p class="sec-titulo">Resultado final por punto al cierre de campaña</p>
+    <div class="leyenda">
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c1)"></span>C1 Tradición</span>
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c2)"></span>C2 Crispetas</span>
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c3)"></span>C3 Tenders</span>
+    </div>
+    <table class="tabla-res">
+      <thead><tr>
+        <th>Punto</th>
+        <th class="num">Total vendido</th>
+        <th class="num">Meta</th>
+        <th>% meta</th>
+        <th class="num">C1 final</th>
+        <th class="num">C2 final</th>
+        <th class="num">C3 final</th>
+        <th>Tendencia semanal</th>
+      </tr></thead>
+      <tbody>${filas}</tbody>
+    </table>
+
+    <p class="sec-titulo">Resultados financieros de campaña</p>
+    <div class="kpi-grid" style="margin-bottom:1.2rem">
+      <div class="kpi-tile">
+        <div class="kpi-label">Ingreso total</div>
+        <div class="kpi-val kpi-ok">$${(INGRESO_TOTAL/1000000).toFixed(1)}M</div>
+        <div class="kpi-sub">$${fmt(INGRESO_TOTAL)}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">Rentabilidad bruta</div>
+        <div class="kpi-val kpi-ok">$${(RENTABILIDAD/1000000).toFixed(1)}M</div>
+        <div class="kpi-sub">$${fmt(RENTABILIDAD)}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">% Rentabilidad bruta</div>
+        <div class="kpi-val kpi-ok">${PCT_RENTABILIDAD}%</div>
+        <div class="kpi-sub">antes de gastos de campaña</div>
+      </div>
+    </div>
+
+    <p class="sec-titulo">Participación por punto</p>
+    <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:1.2rem">
+      <div style="flex:0 0 auto">${grafTorta()}</div>
+      <div style="flex:1;min-width:200px">
+        <table class="tabla-res" style="font-size:11px">
+          <thead><tr>
+            <th>Punto</th>
+            <th class="num">Unidades</th>
+            <th class="num">% und</th>
+            <th class="num">Ingreso</th>
+            <th class="num">% $</th>
+          </tr></thead>
+          <tbody>${grafTortaTabla()}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="sec-titulo">Mezcla acumulada final vs objetivo 50-30-20</p>
+    <div class="leyenda">
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c1)"></span>C1 Tradición</span>
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c2)"></span>C2 Crispetas</span>
+      <span class="lchip"><span class="lchip-dot" style="background:var(--c3)"></span>C3 Tenders</span>
+      <span class="lchip"><span class="lchip-dot" style="background:rgba(0,0,0,0.35)"></span>línea = objetivo C1 50%</span>
+    </div>
+    ${mixHtml}
+
+    <p class="sec-titulo">Mix general total de la campaña</p>
+    ${mixTotalHtml()}
+
+    <p class="sec-titulo">Volumen por punto — todas las semanas</p>
+    <div class="leyenda">
+      ${PUNTOS.map((p,i)=>`<span class="lchip"><span class="lchip-dot" style="background:${colores[i]}"></span>${p}</span>`).join('')}
+    </div>
+    <div class="chart-wrap">${svgVol}</div>
+  `;
+}
+
+// ─── TAB DE PUNTO ────────────────────────────────────────────────────────────
+function renderPunto(nombre){
+  const d = DIARIO[nombre];
+  const t = sum(d,'c1','c2','c3');
+  const m = META_VOL[nombre];
+  const pc = pct(t,m);
+  const c1t=sum(d,'c1'), c2t=sum(d,'c2'), c3t=sum(d,'c3');
+  const c1p=Math.round(c1t/t*100), c2p=Math.round(c2t/t*100), c3p=100-c1p-c2p;
+
+  // KPI destacado
+  const dest = KPI_DEST[nombre](d);
+
+  // mejor semana volumen
+  let mejSV=0, mejSL='';
+  SEMS.forEach(s=>{ const v=sumSem(d,'c1',s)+sumSem(d,'c2',s)+sumSem(d,'c3',s); if(v>mejSV){mejSV=v;mejSL=s.label;}});
+  const mejSemDia=Math.round(mejSV/(nombre==='Avenida'||nombre==='Centro'||nombre==='Unicentro'?9:7));
+
+  // tabla mezcla semanal
+  let filasMix='';
+  let totC1=0,totC2=0,totC3=0,totT=0;
+  SEMS.forEach((s,i)=>{
+    const c1=sumSem(d,'c1',s), c2=sumSem(d,'c2',s), c3=sumSem(d,'c3',s), tv=c1+c2+c3;
+    totC1+=c1; totC2+=c2; totC3+=c3; totT+=tv;
+    const p1=Math.round(c1/tv*100), p2=Math.round(c2/tv*100), p3=100-p1-p2;
+    filasMix+=`<tr>
+      <td>${s.label}</td>
+      <td>${c1}</td><td>${c2}</td><td>${c3}</td><td>${tv}</td>
+      <td><span class="mix-pct ${mixStatus(p1,50)}">${p1}%</span></td>
+      <td><span class="mix-pct ${mixStatus(p2,30)}">${p2}%</span></td>
+      <td><span class="mix-pct ${mixStatus(p3,20)}">${p3}%</span></td>
+    </tr>`;
+  });
+  filasMix+=`<tr>
+    <td>Acumulado</td>
+    <td>${totC1}</td><td>${totC2}</td><td>${totC3}</td><td>${totT}</td>
+    <td><span class="mix-pct ${mixStatus(c1p,50)}">${c1p}%</span></td>
+    <td><span class="mix-pct ${mixStatus(c2p,30)}">${c2p}%</span></td>
+    <td><span class="mix-pct ${mixStatus(c3p,20)}">${c3p}%</span></td>
+  </tr>`;
+
+  // gráfico mezcla semanal (stacked 100%)
+  const svgMix = grafStackedSems(d, nombre);
+
+  document.getElementById('pane-'+nombre).innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-tile">
+        <div class="kpi-label">Total vendido</div>
+        <div class="kpi-val ${pc>=100?'kpi-ok':'kpi-bad'}">${fmt(t)}</div>
+        <div class="kpi-sub">meta: ${fmt(m)}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">Cumplimiento</div>
+        <div class="kpi-val ${pc>=100?'kpi-ok':'kpi-bad'}">${pc}%</div>
+        <div class="kpi-sub">${t-m>0?'+'+fmt(t-m)+' sobre meta':'faltaron '+fmt(m-t)}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">${dest.label}</div>
+        <div class="kpi-val ${dest.cls}">${dest.val}</div>
+        <div class="kpi-sub">${dest.sub}</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">Mejor sem vol</div>
+        <div class="kpi-val">${mejSL}</div>
+        <div class="kpi-sub">${fmt(mejSV)} und · ${mejSemDia}/día</div>
+      </div>
+    </div>
+
+    <p class="sec-titulo">Mezcla semana a semana — ${nombre}</p>
+    ${svgMix}
+
+    <table class="tabla-mix">
+      <thead><tr>
+        <th style="text-align:left">Semana</th>
+        <th>C1</th><th>C2</th><th>C3</th><th>Total</th>
+        <th>C1%</th><th>C2%</th><th>C3%</th>
+      </tr></thead>
+      <tbody>${filasMix}</tbody>
+    </table>
+  `;
+}
+
+// ─── GRÁFICO BARRAS AGRUPADAS ─────────────────────────────────────────────────
+function grafBarrasAgrupadas(labels, series, colores, data, W, H){
+  const pad={t:10,r:10,b:30,l:35};
+  const iW=W-pad.l-pad.r, iH=H-pad.t-pad.b;
+  const N=labels.length, S=series.length;
+  const bW=iW/N, gW=bW*0.85, bI=gW/S;
+  const maxV=Math.max(...data.flat())*1.1;
+  const ys=v=>(iH-(v/maxV)*iH);
+  let bars='', axes='';
+  labels.forEach((l,i)=>{
+    const x=pad.l+i*bW;
+    axes+=`<text x="${(x+bW/2).toFixed(1)}" y="${H-pad.b+13}" text-anchor="middle" fill="#7A7874" font-size="9">${l}</text>`;
+    data.forEach((sd,si)=>{
+      const v=sd[i], bx=x+(bW-gW)/2+si*bI, bh=(v/maxV)*iH;
+      bars+=`<rect x="${bx.toFixed(1)}" y="${(pad.t+ys(v)).toFixed(1)}" width="${(bI-1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${colores[si]}" rx="2"/>`;
+      if(v>0) bars+=`<text x="${(bx+bI/2-0.5).toFixed(1)}" y="${(pad.t+ys(v)-3).toFixed(1)}" text-anchor="middle" fill="${colores[si]}" font-size="8" font-weight="600">${v}</text>`;
+    });
+  });
+  // grid
+  [0,.25,.5,.75,1].forEach(f=>{
+    const y=pad.t+iH*(1-f);
+    axes+=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#E8E6E3" stroke-width="1"/>`;
+    if(f>0) axes+=`<text x="${(pad.l-4).toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="end" fill="#7A7874" font-size="8">${Math.round(maxV*f)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${axes}${bars}</svg>`;
+}
+
+// ─── GRÁFICO STACKED 100% SEMANAS ────────────────────────────────────────────
+function grafStackedSems(d, nombre){
+  const W=800, H=220, pad={t:10,r:10,b:30,l:10};
+  const iW=W-pad.l-pad.r, iH=H-pad.t-pad.b;
+  const N=SEMS.length, bW=iW/N, bI=bW*0.72;
+  let bars='', xlabels='';
+  SEMS.forEach((s,i)=>{
+    const c1=sumSem(d,'c1',s), c2=sumSem(d,'c2',s), c3=sumSem(d,'c3',s), tv=c1+c2+c3;
+    const p1=c1/tv, p2=c2/tv, p3=c3/tv;
+    const bx=pad.l+i*bW+(bW-bI)/2;
+    // stacked desde abajo: c3, c2, c1
+    const h3=p3*iH, h2=p2*iH, h1=p1*iH;
+    bars+=`<rect x="${bx.toFixed(1)}" y="${(pad.t+iH-h3).toFixed(1)}" width="${bI.toFixed(1)}" height="${h3.toFixed(1)}" fill="var(--c3)" rx="2"/>`;
+    bars+=`<rect x="${bx.toFixed(1)}" y="${(pad.t+iH-h3-h2).toFixed(1)}" width="${bI.toFixed(1)}" height="${h2.toFixed(1)}" fill="var(--c2)"/>`;
+    bars+=`<rect x="${bx.toFixed(1)}" y="${pad.t.toFixed(1)}" width="${bI.toFixed(1)}" height="${h1.toFixed(1)}" fill="var(--c1)" rx="2"/>`;
+    // labels
+    if(h1>14) bars+=`<text x="${(bx+bI/2).toFixed(1)}" y="${(pad.t+h1/2+4).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">${Math.round(p1*100)}%</text>`;
+    if(h2>14) bars+=`<text x="${(bx+bI/2).toFixed(1)}" y="${(pad.t+h1+h2/2+4).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">${Math.round(p2*100)}%</text>`;
+    if(h3>14) bars+=`<text x="${(bx+bI/2).toFixed(1)}" y="${(pad.t+h1+h2+h3/2+4).toFixed(1)}" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">${Math.round(p3*100)}%</text>`;
+    xlabels+=`<text x="${(bx+bI/2).toFixed(1)}" y="${H-pad.b+13}" text-anchor="middle" fill="#7A7874" font-size="9">${s.label}</text>`;
+  });
+  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">${bars}${xlabels}</svg></div>`;
+}
+
+// ─── TAB BONOS ───────────────────────────────────────────────────────────────
+function renderBonos(){
+  // Puntos que cumplieron volumen
+  const conVol = PUNTOS.filter(p => sum(DIARIO[p],'c1','c2','c3') >= META_VOL[p]);
+  const sinVol = PUNTOS.filter(p => sum(DIARIO[p],'c1','c2','c3') < META_VOL[p]);
+
+  // Calcular mejora de mezcla: prom C2+C3 sem1+2 vs prom C2+C3 sem4+5
+  function calcMejora(p){
+    const d = DIARIO[p];
+    const pPrim = SEMS.slice(0,2).map(s=>{
+      const c2=sumSem(d,'c2',s), c3=sumSem(d,'c3',s), tv=sumSem(d,'c1',s)+c2+c3;
+      return Math.round((c2+c3)/tv*100);
+    });
+    const pSeg = SEMS.slice(3,5).map(s=>{
+      const c2=sumSem(d,'c2',s), c3=sumSem(d,'c3',s), tv=sumSem(d,'c1',s)+c2+c3;
+      return Math.round((c2+c3)/tv*100);
+    });
+    const promPrim = Math.round(pPrim.reduce((a,b)=>a+b,0)/pPrim.length);
+    const promSeg  = Math.round(pSeg.reduce((a,b)=>a+b,0)/pSeg.length);
+    return { promPrim, promSeg, mejora: promSeg - promPrim };
+  }
+
+  // Textos explicativos por punto
+  const TEXTOS = {
+    Avenida: (mej) => {
+      const d=DIARIO.Avenida;
+      const s1=sumSem(d,'c2',SEMS[0])+sumSem(d,'c3',SEMS[0]), t1=sumSem(d,'c1',SEMS[0])+s1;
+      const s5=sumSem(d,'c2',SEMS[4])+sumSem(d,'c3',SEMS[4]), t5=sumSem(d,'c1',SEMS[4])+s5;
+      const p1=Math.round(s1/t1*100), p5=Math.round(s5/t5*100);
+      return `Primera mitad prom. ${mej.promPrim}% C2+C3 → Segunda mitad prom. ${mej.promSeg}% C2+C3. <strong>Mejora +${mej.mejora}pp.</strong> C2 se mantuvo estable alrededor del 18-22% en las últimas 3 semanas. C3 creció de 14% en Sem 1 a 17% en Sem 5, cerrando con tendencia alcista.`;
+    },
+    Domicilios: (mej) => {
+      return `Primera mitad prom. ${mej.promPrim}% C2+C3 → Segunda mitad prom. ${mej.promSeg}% C2+C3. <strong>Mejora +${mej.mejora}pp.</strong> Sem 5: mejor mezcla de cualquier punto en toda la campaña (C2 45% + C3 22%). Tanto C2 como C3 crecieron de forma independiente hacia el cierre.`;
+    },
+    Principal: (mej) => {
+      return `Primera mitad prom. ${mej.promPrim}% C2+C3 → Segunda mitad prom. ${mej.promSeg}% C2+C3. <strong>Sin mejora (${mej.mejora}pp).</strong> C3 Tenders: comenzó en 12%, cerró en 10% — sin movimiento en 5 semanas. C2 arrancó en 23% y cerró en 19% — también a la baja. La mezcla al cierre fue inferior a la del arranque.`;
+    }
+  };
+
+  // Construir tarjeta por punto con vol
+  function tarjetaPunto(nombre){
+    const d = DIARIO[nombre];
+    const t = sum(d,'c1','c2','c3'), m = META_VOL[nombre];
+    const pc = Math.round(t/m*100);
+    const mej = calcMejora(nombre);
+    const califica = mej.mejora > 0;
+    const chipMejTxt = mej.mejora > 0 ? `+${mej.mejora}pp segunda mitad` : mej.mejora === 0 ? '0pp — sin mejora' : `${mej.mejora}pp retroceso`;
+    const chipMejCls = mej.mejora > 0 ? 'bono-chip-mejora' : 'bono-chip-mejora' + ' style="background:#FEE2E2;color:#991B1B"';
+
+    // Mini gráfico semanal
+    let gridRows = '';
+    // Fila encabezados
+    gridRows += `<div class="bono-grid-hdr"></div>`;
+    SEMS.forEach(s=>{ gridRows+=`<div class="bono-grid-hdr">${s.label}</div>`; });
+
+    // Fila C2+C3
+    gridRows += `<div class="bono-row-label">C2+C3</div>`;
+    SEMS.forEach(s=>{
+      const c2=sumSem(d,'c2',s), c3=sumSem(d,'c3',s), tv=sumSem(d,'c1',s)+c2+c3;
+      const p23=Math.round((c2+c3)/tv*100);
+      const bg = p23>=40?'#15803D': p23>=30?'#2E7D32':'#6B7280';
+      gridRows+=`<div class="bono-bar-cell"><div class="bono-bar-outer" style="background:${bg}">${p23}%</div></div>`;
+    });
+
+    // Fila C2
+    gridRows += `<div class="bono-row-label" style="color:var(--c2)">C2 Crispetas</div>`;
+    SEMS.forEach(s=>{
+      const c2=sumSem(d,'c2',s), tv=sumSem(d,'c1',s)+c2+sumSem(d,'c3',s);
+      const p=Math.round(c2/tv*100);
+      gridRows+=`<div class="bono-bar-cell"><div class="bono-bar-outer" style="background:var(--c2)">${p}%</div></div>`;
+    });
+
+    // Fila C3
+    gridRows += `<div class="bono-row-label" style="color:var(--morado)">C3 Tenders</div>`;
+    SEMS.forEach(s=>{
+      const c3=sumSem(d,'c3',s), tv=sumSem(d,'c1',s)+sumSem(d,'c2',s)+c3;
+      const p=Math.round(c3/tv*100);
+      gridRows+=`<div class="bono-bar-cell"><div class="bono-bar-outer" style="background:var(--morado)">${p}%</div></div>`;
+    });
+
+    // Fila vol sem
+    gridRows += `<div class="bono-row-label" style="font-size:10px;color:var(--gris3)">Vol. sem.</div>`;
+    SEMS.forEach(s=>{
+      const v=sumSem(d,'c1',s)+sumSem(d,'c2',s)+sumSem(d,'c3',s);
+      gridRows+=`<div class="bono-vol-cell">${v}</div>`;
+    });
+
+    const chipMejoraStyle = mej.mejora > 0 ? 'background:#FEF9C3;color:#92400E' : 'background:#FEE2E2;color:#991B1B';
+    const textoFn = TEXTOS[nombre];
+    const textoHtml = textoFn ? textoFn(mej) : '';
+
+    return `
+    <div class="bono-card" style="${califica?'border-color:#86EFAC':'border-color:#FECACA'}">
+      <div class="bono-header">
+        <span class="bono-nombre">${nombre}</span>
+        <span class="bono-chip" style="${chipMejoraStyle}">${chipMejTxt}</span>
+        <span class="bono-veredicto ${califica?'veredicto-si':'veredicto-no'}">${califica?'✓ Califica para bono':'✗ No califica'}</span>
+      </div>
+      <div class="bono-grid">${gridRows}</div>
+      <div class="bono-caja-txt ${califica?'caja-si':'caja-no'}">${textoHtml}</div>
+    </div>`;
+  }
+
+  // Puntos sin vol
+  let sinVolHtml = '';
+  if(sinVol.length){
+    sinVol.forEach(p=>{
+      const t=sum(DIARIO[p],'c1','c2','c3'), m=META_VOL[p], pc=Math.round(t/m*100);
+      sinVolHtml+=`<div class="bono-no-vol"><strong>${p}</strong> — No cumplió requisito de volumen (${pc}% de meta ${m} und). No se evalúa mezcla.</div>`;
+    });
+  }
+
+  // Intro
+  const introHtml = `
+    <div style="background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.2rem;font-size:12px;line-height:1.5;color:#78350F">
+      <strong>Criterios de bono:</strong> (1) Cumplir 100% de la meta de volumen · (2) Demostrar mejora progresiva y visible en la mezcla C2+C3 a lo largo de la campaña — aunque no se haya alcanzado el objetivo 50-30-20.
+    </div>`;
+
+  const tituloNoVol = sinVol.length ? `<p class="sec-titulo" style="margin-top:1rem">Puntos que no cumplieron volumen — fuera de evaluación</p>` : '';
+
+  document.getElementById('pane-bonos').innerHTML =
+    introHtml +
+    `<p class="sec-titulo">Puntos que cumplieron volumen — evaluación de mezcla</p>` +
+    conVol.map(tarjetaPunto).join('') +
+    tituloNoVol + sinVolHtml;
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function setTab(nombre, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('activo'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('activo'));
+  btn.classList.add('activo');
+  document.getElementById('pane-'+nombre).classList.add('activo');
+  if(nombre==='resumen') renderResumen();
+  else if(nombre==='bonos') renderBonos();
+  else renderPunto(nombre);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderResumen();
+</script>
+</body>
+</html>
+
+</body></html>
